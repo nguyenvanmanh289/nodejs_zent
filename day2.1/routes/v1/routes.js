@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const { Get , Post , Put ,Delete} = require('../../controller/requires.js')
+const DO = require('../../controller/requires.js')
+const ob = new DO();
 
-router.get('/get',Get);
-router.post('/post',Post);
-router.put('/put',Put);
-router.delete('/delete',Delete);
+router.get('/get',ob.Get);
+router.post('/post',ob.Post);
+router.put('/put',ob.Put);
+router.delete('/delete',ob.Delete);
 
 module.exports = router;
