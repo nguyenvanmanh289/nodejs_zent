@@ -4,7 +4,11 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema({
     name: String, 
-    age : Number
+    age : Number,
+    phoneNumber : Number,
+    email: String,
+    addres: String,
+    sex : String 
 });
 
 const User = mongoose.model("User",userSchema);

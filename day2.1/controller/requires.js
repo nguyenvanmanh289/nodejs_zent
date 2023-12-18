@@ -10,27 +10,22 @@ class CUSTOMER {
 
     read = async (req, res, next) => {
         try {
-
-            // let object = {
-            //     name : req.query.name,
-            //     age : req.query.agea
-            // }
             let listUser = await servicer.readUser();
             res.send(listUser);
         }
         catch (err) {
-            // handle err handmade at here
-            //...
-            //auto passing to express
             next(err);
         }
-
     }
     create = async (req, res, next) => {
         try {
             let object = {
                 name: req.body.name,
-                age: req.body.age
+                age: req.body.age,
+                phoneNumber : req.body.phoneNumber,
+                email : req.body.email,
+                address : req.body.address,
+                sex : req.body.sex
             }
 
             console.log(object);
@@ -86,7 +81,10 @@ class PRODUCT {
         try {
             let object = {
                 name: req.body.name,
-                since: req.body.since
+                brand: req.body.brand,
+                since: req.body.since,
+                quantity:req.body.quantity,
+                price: req.body.pric
             }
             console.log(object);
 
