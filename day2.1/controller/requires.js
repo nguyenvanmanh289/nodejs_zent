@@ -1,57 +1,126 @@
 const { json } = require("body-parser")
 const err = require("./middleware/errorHanding")
+const service = require('../services/service.js')
+const servicer = new service;
 
-class DO{
+const productService = require('../services/productService.js')
+const proServicer = new productService();
 
-    Get = (req,res,next)=>{
-        try{
-            res.write('<html> <form action="http://localhost:81/home/customer/get" method="GET"><input type="text" name="name" /><input type="submit" value="send" /></form></html>')
-            res.end()
-            console.log("name: ",req.query.name)
-            //fake 1 err pass to express
-            //throw new error("fake err")
+class CUSTOMER {
+
+    read = async (req, res, next) => {
+        try {
+
+            // let object = {
+            //     name : req.query.name,
+            //     age : req.query.agea
+            // }
+            let listUser = await servicer.readUser();
+            res.send(listUser);
         }
-        catch(err){
+        catch (err) {
             // handle err handmade at here
-                //...
+            //...
             //auto passing to express
             next(err);
         }
-        
+
     }
-    Post = (req,res)=>{
+    create = async (req, res, next) => {
         try {
-            object = {
+            let object = {
                 name: req.body.name,
                 age: req.body.age
             }
-            res.json(object);
-            console.log(req.body)
+
+            console.log(object);
+
+            let a = await servicer.createUser(object) ? "created succed" : "failler to create";
+            res.send(a)
         }
-        catch(err){
+        catch (err) {
             // handle err handmade at here
-                //...
+            //...
             //auto passing to express
             next(err);
         }
-        
+
     }
-    Put = (req,res)=>{
+    update = async (req, res) => {
         //try{}
-        object = {
+        let object = {
             name: req.body.name,
             age: req.body.age
         }
-        res.json(object);
+        let m = await servicer.updateUser(object);
+        if (m) {
+            res.send("update success")
+        }
+        else {
+            res.send("false to update")
+        }
         //catch
     }
-    Delete = (req,res)=>{
+    Delete = async (req, res) => {
         //fake err test
-        throw new err("fake err")
-        res.send(req.query.name)
+        let name = req.query.name;
+        let a = await servicer.deleteUser(name) ? "delete succed" : "failer to delete";
+        res.send(a);
+
+
     }
 }
 
-module.exports = DO;
+
+class PRODUCT {
+    read = async (req, res, next) => {
+        try {
+            let listProduct = await proServicer.read();
+            res.send(listProduct);
+        }
+        catch (err) {
+            next(err);
+        }
+    }
+    create = async (req, res, next) => {
+        try {
+            let object = {
+                name: req.body.name,
+                since: req.body.since
+            }
+            console.log(object);
+
+            let a = await proServicer.create(object) ? "created succed" : "failler to create";
+            res.send(a)
+        }
+        catch (err) {
+            next(err);
+        }
+
+    }
+    update = async (req, res) => {
+        let object = {
+            name: req.body.name,
+            since: req.body.since
+        }
+        let m = await proServicer.update(object);
+        if (m) {
+            res.send("update success")
+        }
+        else {
+            res.send("false to update")
+        }
+    }
+    Delete = async (req, res) => {
+        let object = {
+            name: req.query.name,
+            since: req.query.since
+        }
+        let a = await proServicer.delete(object) ? "delete succed" : "failer to delete";
+        res.send(a);
+    }
+}
+
+module.exports = { CUSTOMER, PRODUCT };
 
 
