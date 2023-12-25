@@ -8,12 +8,21 @@ app.use(express.json())
 
 const route = require('./routes/v1/index');
 const route2 = require('./routes/v2/index');
+const loginRoute = require('./routes/login/index.js');
+
 let port = 81;
 
-app.use('/home',route);
-app.use('/home',route2);
+app.use('/home',route); //customer api
+app.use('/home',route2); //product api
+app.use('/home',loginRoute); //login api
+
+// handle  global err
 app.use(err);
+
+//connect data base
 connect();
+
+// start server
 app.listen(port,()=>{
     console.log(`server run at localhost:${port}`)
 })

@@ -1,10 +1,18 @@
 const { json } = require("body-parser")
-const err = require("./middleware/errorHanding")
+const err = require("./middleware/errorHanding.js")
 const service = require('../services/service.js')
 const servicer = new service;
 
 const productService = require('../services/productService.js')
 const proServicer = new productService();
+const userLoginService = require('../services/loginService.js')
+const userLogin = new userLoginService();
+
+require('dotenv').config();
+//json webtoken
+const jwt = require('jsonwebtoken');
+//vẻify token
+const verifyToken = require('../controller/middleware/verifyToken.js');
 
 class CUSTOMER {
 
@@ -31,7 +39,12 @@ class CUSTOMER {
             console.log(object);
 
             let a = await servicer.createUser(object) ? "created succed" : "failler to create";
-            res.send(a)
+            let token = jwt.sign({name : req.body.name},process.env.SECRET_KEY);
+
+            res.status(200).json({
+                message : "tao user thanh cong",
+                token : token
+            })
         }
         catch (err) {
             // handle err handmade at here
@@ -119,6 +132,70 @@ class PRODUCT {
     }
 }
 
-module.exports = { CUSTOMER, PRODUCT };
+class LOGIN{
+    async readLogin(req,res,next){
+       try{
+         let result = await userLogin.read(req.body);
+         if(result){
+            let token = jwt.sign(req.body,process.env.SECRET_KEY);
+             res.status(200).json({
+                 message: "dang nhap thanh cong",
+                 info: req.body,
+                 token : token
+             })
+         }
+        else{
+            res.status(404).json({
+                message: "dang nhap that bai",
+                info: req.body,
+            })
+        }
+    
+       }
+       catch(err){
+            next(err);
+        }
+    }
+    async createLogin(req,res,next){
+       try{
+         let result = await userLogin.create(req.body);
+        
+         if(result){
+            let token = jwt.sign(req.body,process.env.SECRET_KEY);
+            res.status(200).json({
+                message: "tạo tài khoản thành công",
+                authorization : `Bearer ${token}`
+            })
+         }
+         else{
+            res.status(404).json({
+                message: "da ton tai tai khoan nay"
+            })
+         }     
+       }
+       catch(err){
+            next(err);
+        }
+    }
+    async updateLogin(err,req,res,next){
+       try{
+         let result = await userLogin.update(req.body);
+        res.send(result);
+       }
+       catch(err){
+            next(err);
+        }
+    }
+    async deleteLogin(err,req,res,next){
+       try{
+         let result = await userLogin.delete(req.query);
+        res.send(result);
+       }
+       catch(err){
+            next(err);
+        }
+    }
+}
+module.exports = { CUSTOMER, PRODUCT,LOGIN };
 
 

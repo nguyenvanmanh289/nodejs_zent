@@ -2,7 +2,7 @@ const Products = require ("../model/productModel.js");
 
 class productService{
     read = async ()=>{
-       let listproduct = await  Products.find()
+       let listproduct = await Products.find()
         return listproduct;
     }
     create = async (data) => {
